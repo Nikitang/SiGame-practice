@@ -2,32 +2,34 @@
 import choozing from "../chooze.js";
 import readlineSync from "readline-sync";
 import questions from "../questions.js";
-import { randomInteger } from "../functions.js";
+import { randomInteger, capitalize } from "../functions.js";
 import trueAnswers from "../trueAnswer.js";
 const startGame = () => {
     const notNeeds = [];
     let player1 = 0;
     let player2 = 0;
     console.log('Добро пожаловать в "SiGame"');
-    for(let i = 0; i < 3; i += 1) {
+    const how = readlineSync.question('Назовите количество вопросов: ')
+    for(let i = 0; i < Number(how); i += 1) {
         const rand = randomInteger(1, 2)
         console.log(`Тему выбирает игрок: ${rand} `);
         console.log(Object.keys(questions));
         let tema = readlineSync.question('Тема: ')
-        if (!Object.hasOwn(questions, tema)) {
+        const cap = capitalize(tema);
+        if (!Object.hasOwn(questions, cap)) {
             console.log('Выберите существующую тему.');
             i--;
             continue;
         }
         console.log(`Выберите кол-во очков`);
         let chooz = choozing();
-        if (notNeeds.some(item => item.tema === tema && item.chooz === chooz)) {
+        if (notNeeds.some(item => item.cap === cap && item.chooz === chooz)) {
             console.log('Вы уже выбирали эту тему с таким количеством баллов. Пожалуйста, выберите заново.');
             i--;
             continue;
         }
-        notNeeds.push({ tema, chooz });
-        console.log(`${questions[tema][chooz]}:`);
+        notNeeds.push({ cap, chooz });
+        console.log(`${questions[cap][chooz]}:`);
         const player1Answer = readlineSync.question(`Ответ игрока ${rand}: `);
         
         let getNum = 0;
@@ -39,7 +41,7 @@ const startGame = () => {
 
         const player2Answer = readlineSync.question(`Ответ игрока ${getNum}: `);
 
-        if (player1Answer === trueAnswers[tema][chooz]) {
+        if (capitalize(player1Answer) === trueAnswers[cap][chooz]) {
             if (rand === 1) {
                 console.log(`Игрок номер ${rand} + ${chooz}!!!`);
                 player1 += chooz;
@@ -47,14 +49,14 @@ const startGame = () => {
                 console.log(`Игрок номер ${rand} + ${chooz}!!!`);
                 player2 += chooz;
             }
-        } else if (player1Answer !== trueAnswers[tema][chooz]) {
+        } else if (capitalize(player1Answer) !== trueAnswers[cap][chooz]) {
             if (rand === 1) {
                 console.log(`Игрок номер ${rand}, неверно :(`);
             } else if (rand === 2) {
                 console.log(`Игрок номер ${rand}, неверно :(`);
             }
         }
-        if (player2Answer === trueAnswers[tema][chooz]) {
+        if (capitalize(player2Answer) === trueAnswers[cap][chooz]) {
             if (getNum === 1) {
                 console.log(`Игрок номер ${getNum} + ${chooz}!!!`);
                 player1 += chooz;
@@ -62,7 +64,7 @@ const startGame = () => {
                 console.log(`Игрок номер ${getNum} + ${chooz}!!!`);
                 player2 += chooz;
             }
-        } else if (player2Answer !== trueAnswers[tema][chooz]) {
+        } else if (capitalize(player2Answer) !== trueAnswers[cap][chooz]) {
             if (getNum === 1) {
                 console.log(`Игрок номер ${getNum}, неверно :(`);
             } else if (getNum === 2) {
@@ -76,12 +78,31 @@ const startGame = () => {
     }
         if (player1 > player2) {
             console.log(`Игрок номер 1 - победитель (${player1} баллов)`);
+            return { 'Игрок 1':player1 };
         } else if (player2 > player1) {
             console.log(`Игрок номер 2 - победитель (${player2} баллов)`);
+            return { 'Игрок 2':player2 }; 
         } else {
             console.log(`Ничья =) (${player1} баллов и ${player2} баллов)`);
+            return  {'Ничья': {'Игрок 1': player1, 'Игрок 2': player2}}
         }
     
 };
 
-startGame();
+const realStartGame = () => {
+    let iter = 1;
+    let resultObj = {};
+    while(true) {
+        const start = readlineSync.question('Вы хотите начать игру?: ');
+        if(start === 'да') {
+            resultObj[`Игра ${iter}`] = startGame();
+        } else if (start === 'нет') {
+            return console.log('Очень жаль =(');
+        } else {
+            return console.log(resultObj);
+        }
+        iter++
+    }
+};
+
+realStartGame();

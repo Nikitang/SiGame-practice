@@ -28,7 +28,7 @@ const choozing = () => {
         const input = readline.keyIn('Выберите кол-во очков\nНажмите "x" для увеличения значения или "z" для уменьшения, "q" для выхода: ', { hideEchoBack: true, mask: '', limit: 'xzq' });
 
         if (input === 'q') {
-            console.log(`Selected value: ${sliderValue}`);
+            console.log(`Выбранное значение: ${sliderValue}`);
             return sliderValue;
             
         }
