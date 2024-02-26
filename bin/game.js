@@ -97,7 +97,8 @@ const realStartGame = () => {
         if(start === 'да') {
             resultObj[`Игра ${iter}`] = startGame();
         } else if (start === 'нет') {
-            return console.log('Очень жаль =(');
+            console.log('Очень жаль =(');
+            return console.log(resultObj);
         } else {
             return console.log(resultObj);
         }
